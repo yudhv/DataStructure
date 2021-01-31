@@ -1,3 +1,5 @@
+package ds;
+
 @SuppressWarnings("unchecked")
 public class DynamicArray<T> implements Iterable<T> {
   private T[] arr;
