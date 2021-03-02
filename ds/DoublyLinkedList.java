@@ -96,7 +96,6 @@ public class DoublyLinkedList<T> {
       if (i == index) {
         temp.prev.next = temp.next;
         temp.next.prev = temp.prev;
-        temp = null;
         this.size--;
         return;
       }
