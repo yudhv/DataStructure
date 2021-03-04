@@ -4,11 +4,11 @@ public class Queue<T> {
   private ds.DoublyLinkedList<T> list = null;
 
   public Queue() {
-    this.list = new ds.DoublyLinkedList<T>();
+    this.list = new ds.DoublyLinkedList<>();
   }
 
   public Queue(T value) {
-    this.list = new ds.DoublyLinkedList<T>(value);
+    this.list = new ds.DoublyLinkedList<>(value);
   }
 
   public void enqueue(T value) {
