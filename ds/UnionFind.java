@@ -11,7 +11,7 @@ public class UnionFind {
   private int numComponents;
 
   public UnionFind(int size) {
-    if (size < 0) {
+    if (size <= 0) {
       throw new IllegalArgumentException();
     }
 
@@ -25,6 +25,10 @@ public class UnionFind {
     }
 
     this.numComponents = size;
+  }
+
+  public int components() {
+    return this.numComponents;
   }
 
   public int find(int id) {
@@ -46,7 +50,7 @@ public class UnionFind {
     return find(id1) == find(id2);
   }
 
-  public int groupSize(int id) {
+  public int componentSize(int id) {
     return this.sz[find(id)];
   }
 
@@ -58,7 +62,7 @@ public class UnionFind {
     return this.numComponents;
   }
 
-  public void union(int x, int y) {
+  public void unify(int x, int y) {
     if (x < 0 || y < 0) {
       throw new IllegalArgumentException();
     }
@@ -69,12 +73,12 @@ public class UnionFind {
       return;
     }
 
-    if (groupSize(x) >= groupSize(y)) {
+    if (componentSize(x) >= componentSize(y)) {
       this.ids[rooty] = rootx;
-      this.sz[x] += this.sz[y];
+      this.sz[rootx] += this.sz[rooty];
     } else {
       this.ids[rootx] = rooty;
-      this.sz[y] += this.sz[x];
+      this.sz[rooty] += this.sz[rootx];
     }
 
     this.numComponents--;
