@@ -1,5 +1,9 @@
 package ds;
 
+import java.util.Iterator;
+
+import ds.enums.TreeTraversalOrder;
+
 public class BinarySearchTree<T extends Comparable<T>> {
   private class Node {
     private Node left;
@@ -35,7 +39,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
   }
 
   private Node add(Node parent, T elem) {
-    // Base case: left node
+    // Base case: leaf node
     if (parent == null) {
       return new Node(elem, null, null);
     }
@@ -49,7 +53,7 @@ public class BinarySearchTree<T extends Comparable<T>> {
 
   public boolean remove(T elem) {
     if (this.contains(elem)) {
-      this.remove(this.root, elem);
+      this.root = this.remove(this.root, elem);
       nodeCount--;
       return true;
     }
@@ -75,7 +79,6 @@ public class BinarySearchTree<T extends Comparable<T>> {
         Node temp = this.findMin(node.right);
         node.value = temp.value;
         node.right = this.remove(node.right, temp.value);
-        return node.right;
       }
     }
     return node;
@@ -98,17 +101,26 @@ public class BinarySearchTree<T extends Comparable<T>> {
   // }
 
   public boolean contains(T elem) {
-    Node temp = this.root;
-    while (temp.value.compareTo(elem) != 0) {
-      temp = temp.value.compareTo(elem) < 0 ? temp.left : temp.right;
+    if (this.root == null)
+      return false;
+    Node temp = new Node(this.root.value, this.root.left, this.root.right);
+    int comp = temp.value.compareTo(elem);
+    while (comp != 0) {
+      temp = comp > 0 ? temp.left : temp.right;
+      // Exit with false if we got a leaf node
       if (temp == null) {
         return false;
       }
+      comp = temp.value.compareTo(elem);
     }
     return true;
   }
 
-  public int height(Node node) {
+  public int height() {
+    return this.height(this.root);
+  }
+
+  private int height(Node node) {
     if (node == null) {
       return 0;
     } else {
@@ -119,4 +131,76 @@ public class BinarySearchTree<T extends Comparable<T>> {
       return Math.max(leftHeight, rightHeight);
     }
   }
+
+  public Iterator<T> traverse(TreeTraversalOrder order) {
+    switch (order) {
+    case PRE_ORDER:
+      return this.preOrderTraversal(this.root);
+    case POST_ORDER:
+      return this.postOrderTraversal(this.root);
+    case IN_ORDER:
+      return this.inOrderTraversal(this.root);
+    case LEVEL_ORDER:
+      return this.levelOrderTraversal(this.root);
+    default:
+      return null;
+    }
+  }
+
+  private Iterator<T> preOrderTraversal(Node node) {
+    return new Iterator<T>() {
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public T next() {
+        return node.value;
+      }
+    };
+  }
+
+  private Iterator<T> postOrderTraversal(Node node) {
+    return new Iterator<T>() {
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public T next() {
+        return node.value;
+      }
+    };
+  }
+
+  private Iterator<T> inOrderTraversal(Node node) {
+    return new Iterator<T>() {
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public T next() {
+        return node.value;
+      }
+    };
+  }
+
+  private Iterator<T> levelOrderTraversal(Node node) {
+    return new Iterator<T>() {
+      @Override
+      public boolean hasNext() {
+        return false;
+      }
+
+      @Override
+      public T next() {
+        return node.value;
+      }
+    };
+  }
+
 }
