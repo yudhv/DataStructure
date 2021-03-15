@@ -66,6 +66,7 @@ public class HashTable<K, V> implements Iterable<K> {
 
   public void clear() {
     Arrays.fill(this.table, null);
+    this.size = 0;
   }
 
   private int normalizeIndex(int hash) {
@@ -85,6 +86,9 @@ public class HashTable<K, V> implements Iterable<K> {
     if (key == null)
       throw new IllegalArgumentException();
     LinkedList<Entry<K, V>> bucket = this.table[bucketIndex];
+    if (bucket == null) {
+      return null;
+    }
     for (Entry<K, V> entry : bucket) {
       if (entry.key.equals(key))
         return entry;
@@ -113,16 +117,18 @@ public class HashTable<K, V> implements Iterable<K> {
     if (bucket != null) {
       Entry<K, V> seekEntry = this.bucketSeekEntry(entry.key, bucketIndex);
       if (seekEntry != null) {
+        V lastValue = seekEntry.value;
         seekEntry.value = entry.value;
-        return seekEntry.value;
+        // If modifying existing entry, return the last value
+        return lastValue;
       }
     } else {
       this.table[bucketIndex] = bucket = new LinkedList<>();
-      this.size++;
     }
     bucket.add(entry);
+    this.size++;
     this.resizeTable();
-    return entry.value;
+    return null;
   }
 
   private void resizeTable() {
@@ -166,16 +172,19 @@ public class HashTable<K, V> implements Iterable<K> {
     if (entry != null) {
       LinkedList<Entry<K, V>> bucket = this.table[bucketIndex];
       bucket.remove(entry);
+      if (bucket.isEmpty())
+        bucket = null;
+      this.size--;
       return entry.value;
     }
     return null;
   }
 
   public List<K> keys() {
-    List<K> returnKeys = new ArrayList<>();
-    for (int i = 0; i < this.size; i++) {
-      if (this.table[i] != null) {
-        for (Entry<K, V> entry : this.table[i]) {
+    List<K> returnKeys = new ArrayList<>(this.size());
+    for (LinkedList<Entry<K, V>> bucket : this.table) {
+      if (bucket != null) {
+        for (Entry<K, V> entry : bucket) {
           returnKeys.add(entry.key);
         }
       }
@@ -185,9 +194,9 @@ public class HashTable<K, V> implements Iterable<K> {
 
   public List<V> values() {
     List<V> returnValues = new ArrayList<>();
-    for (int i = 0; i < this.size; i++) {
-      if (this.table[i] != null) {
-        for (Entry<K, V> entry : this.table[i]) {
+    for (LinkedList<Entry<K, V>> bucket : this.table) {
+      if (bucket != null) {
+        for (Entry<K, V> entry : bucket) {
           returnValues.add(entry.value);
         }
       }
